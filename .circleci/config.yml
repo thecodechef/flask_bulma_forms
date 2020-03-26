@@ -1,0 +1,134 @@
+version: 2.1
+
+####################
+# Aliases
+####################
+aliases:
+  - &restore_repo_cache
+    key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+  - &save_repo_cache
+    key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+    paths:
+      - ~/flask-app
+  - &restore_dep_cache
+    keys:
+      - v1-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - v1-deps-{{ .Branch }}
+      - v1-deps
+  - &save_dep_cache
+    key: v1-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+    paths:
+      - '.venv'
+      - '/usr/local/bin'
+      - '/usr/local/bin/python3.8/site-packages'
+
+####################
+# Environment
+####################
+environment:
+  POETRY_USERNAME: {{ .Environment.PYPI_USERNAME }}
+  POETRY_PASSWORD: {{ .Environment.PYPI_PASSWORD }}
+
+####################
+# Commands
+####################
+commands:
+  before_install:
+    description: "Stuff todo before Installation"
+    steps:
+      - run:
+          command: |
+            sudo chown -R circleci:circleci /usr/local/bin
+            sudo chown -R circleci:circleci /usr/local/bin/python3.8/site-packages
+            pip install poetry
+  install_deps:
+    description: "Install Dependencies with `poetry install`"
+    steps:
+      - restore_cache: *restore_dep_cache
+      - run:
+          name: Install Dependencies
+          command: poetry install
+      - save_cache: *save_dep_cache
+
+  run_lint:
+    description: "Lint python files with `flake8`"
+    steps:
+      - run:
+          name: Lint Python
+          command: flake8
+
+  run_tests:
+    description: "Running Tests with `tox`"
+    steps:
+      - run:
+          name: Running Tests
+          command: tox
+
+  push_to_github:
+    description: "Push to GitHub"
+    steps:
+      - run:
+          name: Pushing to GitHub
+          command: |
+            git add .
+            git commit
+            git push -u origin master
+
+  deploy_to_pypi:
+    description: "Deploy to PyPi"
+    steps:
+      - run:
+          name: Deploying
+          command: |
+            poetry build --format wheel
+            poetry publish -u POETRY_USERNAME -p POETRY_PASSWORD
+
+####################
+# Executors
+####################
+executors:
+  python:
+    docker:
+      - image: circleci/python:3.8
+    working_directory: ~/flask-app
+
+####################
+# Jobs
+####################
+jobs:
+  install:
+    executor: python
+    steps:
+      - checkout
+      - before_install
+      - install_deps
+  lint:
+    executor: python
+    steps:
+      - checkout
+      - run_lint
+  test:
+    executor: python
+    steps:
+      - checkout
+      - run_tests
+  push_and_deploy:
+    executor: python
+    steps:
+      - checkout
+      - push_to_github
+      - deploy_to_pypi
+
+####################
+# Workflows
+####################
+workflows:
+  version: 2
+  jobs:
+    - install
+    - lint:
+        requires:
+          - install
+    - test:
+        requires:
+          - install
