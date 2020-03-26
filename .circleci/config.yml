@@ -96,6 +96,7 @@ jobs:
     executor: python
     steps:
       - checkout
+      - install_deps
       - run_lint
   # test:
   #   executor: python
