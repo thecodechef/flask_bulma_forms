@@ -55,7 +55,7 @@ commands:
     steps:
       - run:
           name: Lint Python
-          command: flake8
+          command: python3 -m flake8
 
   # run_tests:
   #   description: "Running Tests with `tox`"
