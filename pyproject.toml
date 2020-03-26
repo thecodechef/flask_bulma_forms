@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flask_bulma_forms"
-version = "0.0.6"
+version = "0.0.7"
 description = "WTF Forms with Bulma Styling"
 readme = "README.md"
 authors = ["Jeremy Bolding <cyberchefjay@gmail.com>"]
@@ -28,6 +28,8 @@ python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+flake8 = "^3.7.9"
+tox = "^3.14.6"
 
 [build-system]
 requires = ["poetry>=0.12"]

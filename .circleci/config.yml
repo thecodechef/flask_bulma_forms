@@ -12,11 +12,11 @@ aliases:
       - ~/flask-app
   - &restore_dep_cache
     keys:
-      - v1-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - v1-deps-{{ .Branch }}-{{ checksum "poetry.lock" }}
       - v1-deps-{{ .Branch }}
       - v1-deps
   - &save_dep_cache
-    key: v1-deps-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+    key: v1-deps-{{ .Branch }}-{{ checksum "poetry.lock" }}
     paths:
       - '.venv'
       - '/usr/local/bin'
@@ -124,11 +124,27 @@ jobs:
 ####################
 workflows:
   version: 2
-  jobs:
-    - install
-    - lint:
-        requires:
-          - install
-    - test:
-        requires:
-          - install
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            only:
+              - master
+    jobs:
+      - install
+
+      - lint:
+          requires:
+            - install
+
+      - test:
+          requires:
+            - install
+
+      - push_and_deploy:
+          requires:
+            - install
+            - lint
+            - test
