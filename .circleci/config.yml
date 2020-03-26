@@ -131,8 +131,7 @@ workflows:
           cron: "0 0 * * *"
           filters:
             branches:
-              only:
-                - master
+              - master
     jobs:
       - install
 
