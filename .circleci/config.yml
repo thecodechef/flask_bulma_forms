@@ -57,7 +57,7 @@ commands:
       - restore_cache: *restore_repo_cache
       - run:
           name: Test Py Files
-          command: tox
+          command: poetry run pytest
 
   deploy_to_pypi:
     description: "Deploy to PyPi"
