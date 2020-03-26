@@ -111,7 +111,7 @@ workflows:
   nightly:
     jobs:
       - install
-      - test
+      - test:
           requires:
             - install
       - deploy:
