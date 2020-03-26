@@ -111,6 +111,9 @@ workflows:
   nightly:
     jobs:
       - install
+      - test
+          requires:
+            - install
       - deploy:
           type: approval
           requires:
