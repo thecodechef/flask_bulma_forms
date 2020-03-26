@@ -126,23 +126,14 @@ workflows:
   version: 2
 
   nightly:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              - master
     jobs:
       - install
-
       - lint:
           requires:
             - install
-
       - test:
           requires:
             - install
-
       - push_and_deploy:
           requires:
             - install
