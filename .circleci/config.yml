@@ -38,7 +38,7 @@ commands:
     description: "Stuff todo before Installation"
     steps:
       - run:
-          command:
+          command: |
             pip install poetry
 
   install_deps:
@@ -49,10 +49,20 @@ commands:
           name: Install Dependencies
           command: poetry install
       - save_cache: *save_dep_cache
+      - save_cache: *save_repo_cache
+
+  test_pyfiles:
+    description: "Test .py files with `tox`"
+    steps:
+      - restore_cache: *restore_repo_cache
+      - run:
+          name: Test Py Files
+          command: tox
 
   deploy_to_pypi:
     description: "Deploy to PyPi"
     steps:
+      - restore_cache: *restore_repo_cache
       - run:
           name: Deploying
           command: |
@@ -78,11 +88,14 @@ jobs:
       - checkout
       - before_install
       - install_deps
-  # test:
-  #   executor: python
-  #   steps:
-  #     - checkout
-  #     - run_tests
+
+  test:
+    executor: python
+    steps:
+      - checkout
+      - test_pyfiles
+      # - test_static_files
+
   deploy:
     executor: python
     steps:
