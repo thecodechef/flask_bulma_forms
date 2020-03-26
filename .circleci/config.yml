@@ -50,20 +50,6 @@ commands:
           command: poetry install
       - save_cache: *save_dep_cache
 
-  run_lint:
-    description: "Lint python files with `flake8`"
-    steps:
-      - run:
-          name: Lint Python
-          command: python3 -m flake8
-
-  # run_tests:
-  #   description: "Running Tests with `tox`"
-  #   steps:
-  #     - run:
-  #         name: Running Tests
-  #         command: tox
-
   deploy_to_pypi:
     description: "Deploy to PyPi"
     steps:
@@ -92,12 +78,6 @@ jobs:
       - checkout
       - before_install
       - install_deps
-  lint:
-    executor: python
-    steps:
-      - checkout
-      - install_deps
-      - run_lint
   # test:
   #   executor: python
   #   steps:
@@ -118,15 +98,7 @@ workflows:
   nightly:
     jobs:
       - install
-      - lint:
-          requires:
-            - install
-      # - test:
-      #     requires:
-      #       - install
       - deploy:
           type: approval
           requires:
             - install
-            - lint
-            # - test
