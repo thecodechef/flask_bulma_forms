@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "flask_bulma_forms"
-version = "0.0.4"
+version = "0.0.5"
 description = "WTF Forms with Bulma Styling"
 readme = "README.md"
 authors = ["Jeremy Bolding <cyberchefjay@gmail.com>"]
+keywords = ["flask", "flask-extension", "bulma", "flask-bulma", "flask-wtf"]
 classifiers = [
   "Development Status :: 1 - Planning",
   "Environment :: Web Environment",
