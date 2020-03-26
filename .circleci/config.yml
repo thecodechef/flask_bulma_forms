@@ -6,21 +6,22 @@ version: 2.1
 aliases:
   - &restore_repo_cache
     key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
   - &save_repo_cache
     key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
     paths:
-      - ~/flask-app
+      - ~/flask_bulma_forms
+
   - &restore_dep_cache
     keys:
       - v1-deps-{{ .Branch }}-{{ checksum "poetry.lock" }}
       - v1-deps-{{ .Branch }}
       - v1-deps
+
   - &save_dep_cache
     key: v1-deps-{{ .Branch }}-{{ checksum "poetry.lock" }}
     paths:
       - '.venv'
-      - '/usr/local/bin'
-      - '/usr/local/bin/python3.8/site-packages'
 
 ####################
 # Environment
@@ -37,10 +38,9 @@ commands:
     description: "Stuff todo before Installation"
     steps:
       - run:
-          command: |
-            sudo chown -R circleci:circleci /usr/local/bin
-            sudo chown -R circleci:circleci /usr/local/bin/python3.8/site-packages
+          command:
             pip install poetry
+
   install_deps:
     description: "Install Dependencies with `poetry install`"
     steps:
@@ -57,22 +57,12 @@ commands:
           name: Lint Python
           command: flake8
 
-  run_tests:
-    description: "Running Tests with `tox`"
-    steps:
-      - run:
-          name: Running Tests
-          command: tox
-
-  push_to_github:
-    description: "Push to GitHub"
-    steps:
-      - run:
-          name: Pushing to GitHub
-          command: |
-            git add .
-            git commit
-            git push -u origin master
+  # run_tests:
+  #   description: "Running Tests with `tox`"
+  #   steps:
+  #     - run:
+  #         name: Running Tests
+  #         command: tox
 
   deploy_to_pypi:
     description: "Deploy to PyPi"
@@ -90,7 +80,7 @@ executors:
   python:
     docker:
       - image: circleci/python:3.8
-    working_directory: ~/flask-app
+    working_directory: ~/flask_bulma_forms
 
 ####################
 # Jobs
@@ -107,16 +97,15 @@ jobs:
     steps:
       - checkout
       - run_lint
-  test:
+  # test:
+  #   executor: python
+  #   steps:
+  #     - checkout
+  #     - run_tests
+  deploy:
     executor: python
     steps:
       - checkout
-      - run_tests
-  push_and_deploy:
-    executor: python
-    steps:
-      - checkout
-      - push_to_github
       - deploy_to_pypi
 
 ####################
@@ -131,10 +120,11 @@ workflows:
       - lint:
           requires:
             - install
-      - test:
-          requires:
-            - install
-      - push_and_deploy:
+      # - test:
+      #     requires:
+      #       - install
+      - deploy:
+          type: approval
           requires:
             - install
             - lint
