@@ -1,0 +1,32 @@
+{% block doc %}
+<!DOCTYPE html>
+<html{% block html_attrs %}{% endblock %}>
+    {% block html %}
+    <head>
+        {% block head %}
+            <meta charset="utf">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{% block title %}{{title|default}}{% endblock %}</title>
+            {% block styles %}
+                <link rel="stylesheet" href="{{ bulma_find_resource('css/bulma.css', cdn='bulma') }}">
+            {% endblock %}
+        {% endblock %}
+    </head>
+    <body{% block body_attrs %}{% endblock %}>
+        {% block body %}
+            {% block navbar %}
+            {% endblock %}
+            {% block header %}
+            {% endblock %}
+            {% block content %}
+            {% endblock %}
+            {% block footer %}
+            {% endblock %}
+            {% block scripts %}
+                <script src="{{ bulma_find_resource('js/jquery.js', cdn='jquery') }}"></script>
+            {% endblock %}
+        {% endblock %}
+    </body>
+    {% endblock %}
+</html>
+{% endblock %}

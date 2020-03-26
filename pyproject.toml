@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flask_bulma_forms"
-version = "0.0.8"
+version = "0.8.1"
 description = "WTF Forms with Bulma Styling"
 readme = "README.md"
 authors = ["Jeremy Bolding <cyberchefjay@gmail.com>"]
@@ -27,6 +27,7 @@ classifiers = [
 python = "^3.8"
 flask = "^1.1.1"
 flask-wtf = "^0.14.3"
+flask-bootstrap = "^3.3.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

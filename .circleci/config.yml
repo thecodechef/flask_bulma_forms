@@ -52,7 +52,7 @@ commands:
       - save_cache: *save_repo_cache
 
   test_pyfiles:
-    description: "Test .py files with `tox`"
+    description: "Test .py files with `pytest`"
     steps:
       - restore_cache: *restore_repo_cache
       - run:
